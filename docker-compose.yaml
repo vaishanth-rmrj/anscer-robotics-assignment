@@ -1,0 +1,18 @@
+services:
+  anscer-robotics-assignment:
+    image: anscer-ros-noetic:dev-latest
+    build:
+      context: ./docker/dev
+      dockerfile: Dockerfile
+    container_name: cont-anscer-ros-noetic
+    network_mode: "host"
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      - ../anscer-robotics-assignment:/root/anscer-robotics-assignment:z
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ~/.Xauthority:/root/.Xauthority 
+    environment:
+      - DISPLAY=${DISPLAY}
+      - XAUTHORITY=/root/.Xauthority 
+    command: tail -f /dev/null
