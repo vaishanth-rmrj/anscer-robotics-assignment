@@ -106,10 +106,16 @@ include_directories(
 add_executable(get_robot_location src/get_robot_map_location.cpp)
 target_link_libraries(get_robot_location ${catkin_LIBRARIES})
 
-#add_executable(connecting_to_db src/connecting_to_db.cpp)
-#target_link_libraries(connecting_to_db postgresql_database)
-#target_link_libraries(connecting_to_db ${catkin_LIBRARIES})
-
 add_executable(wormhole_location_saver src/wormhole_location_saver.cpp)
 target_link_libraries(wormhole_location_saver postgresql_database)
 target_link_libraries(wormhole_location_saver ${catkin_LIBRARIES})
+
+### Navigator Action Server ###
+add_executable(navigator_action_server src/navigator_action_server.cpp)
+add_dependencies(navigator_action_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(navigator_action_server ${catkin_LIBRARIES})
+
+### Navigator Action Client ###
+add_executable(navigator_action_client src/navigator_action_client.cpp)
+add_dependencies(navigator_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(navigator_action_client ${catkin_LIBRARIES})
