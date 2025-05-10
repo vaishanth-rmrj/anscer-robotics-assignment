@@ -19,7 +19,7 @@ print("Deleted All previous data")
 cur.execute("""
     CREATE TABLE IF NOT EXISTS wormhole_locations (
         map_name   TEXT PRIMARY KEY,
-        location   INTEGER[]
+        location   double precision[]
     )
 """)
 

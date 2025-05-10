@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>anscer_multimap_navigator</name>
+  <version>0.0.0</version>
+  <description>The anscer_multimap_navigator package</description>
+  <author>vaishanth</author>
+  <maintainer email="v@email.com">vaishanth</maintainer>
+  <license>Apache2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>database_interface</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>database_interface</build_export_depend>
+  <build_export_depend>geometry_msgs</build_export_depend>
+
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>database_interface</exec_depend>
+
+  <exec_depend>geometry_msgs</exec_depend>
+
+  <build_depend>tf2</build_depend>
+  <build_depend>tf2_ros</build_depend>
+  <build_export_depend>tf2</build_export_depend>
+  <build_export_depend>tf2_ros</build_export_depend>
+  <exec_depend>tf2</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+  </export>
+</package>
