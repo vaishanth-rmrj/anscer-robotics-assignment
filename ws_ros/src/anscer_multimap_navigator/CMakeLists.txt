@@ -11,6 +11,9 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   tf2_ros
+  actionlib
+  actionlib_msgs
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -34,18 +37,18 @@ find_package(catkin REQUIRED COMPONENTS
 #   Service2.srv
 # )
 
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+# Generate actions in the 'action' folder
+add_action_files(
+  FILES
+  MultimapNavigate.action
+)
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+  actionlib_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -60,7 +63,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES anscer_multimap_navigator
-   CATKIN_DEPENDS roscpp std_msgs database_interface
+   CATKIN_DEPENDS roscpp std_msgs database_interface actionlib actionlib_msgs message_runtime
 #  DEPENDS system_lib
 )
 
