@@ -10,8 +10,15 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 
 cur.execute("""
+    DROP SCHEMA public CASCADE;
+    CREATE SCHEMA public;
+""")
+conn.commit()
+print("Deleted All previous data")
+
+cur.execute("""
     CREATE TABLE IF NOT EXISTS wormhole_locations (
-        map_name   SERIAL PRIMARY KEY,
+        map_name   TEXT PRIMARY KEY,
         location   INTEGER[]
     )
 """)
