@@ -8,6 +8,9 @@ services:
     network_mode: "host"
     restart: unless-stopped
     privileged: true
+    shm_size: '8g'
+    mem_limit: 8g
+    runtime: nvidia
     volumes:
       - ../anscer-robotics-assignment:/root/anscer-robotics-assignment:z
       - /tmp/.X11-unix:/tmp/.X11-unix

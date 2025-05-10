@@ -9,9 +9,14 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
 
 # additional ros dependencies
 RUN apt-get update && apt-get install -q -y --no-install-recommends \
-    ros-noetic-move-base && \
+    python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential python3-rosdep ros-noetic-catkin\
+    ros-noetic-move-base ros-noetic-gmapping && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# Initialize rosdep
+RUN rosdep init || echo "rosdep already initialized" && \
+    rosdep update
 
 WORKDIR /
 
@@ -26,4 +31,4 @@ COPY ros_entrypoint.sh .
 RUN chmod +x /ros_entrypoint.sh
 ENTRYPOINT ["/ros_entrypoint.sh"]
 
-WORKDIR /anscer-robotics-assignment/ws_ros
+WORKDIR /anscer-robotics-assignment/ws_ros/
