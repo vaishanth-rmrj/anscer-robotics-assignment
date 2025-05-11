@@ -1,0 +1,13 @@
+<launch>
+
+    <!-- Room 1 Map server -->
+    <node pkg="map_server" name="map_server_1" type="map_server" args="$(find anscer_navigation)/maps/room1.yaml">
+        <remap from="/map" to="/map_1"/>
+    </node>
+
+    <!-- Room 2 Map server -->
+    <node pkg="map_server" name="map_server_2" type="map_server" args="$(find anscer_navigation)/maps/room2.yaml">
+        <remap from="/map" to="/map_2"/>
+    </node>    
+
+</launch>
