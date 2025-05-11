@@ -61,10 +61,10 @@ generate_messages(
 # )
 
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES anscer_multimap_navigator
+   INCLUDE_DIRS include
+   LIBRARIES ${PROJECT_NAME} db_interface_lib
    CATKIN_DEPENDS roscpp std_msgs database_interface actionlib actionlib_msgs message_runtime
-#  DEPENDS system_lib
+  # DEPENDS system_lib
 )
 
 ###########
@@ -83,6 +83,11 @@ include_directories(
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/anscer_multimap_navigator.cpp
 # )
+
+add_library(db_interface src/db_interface.cpp)
+target_link_libraries(db_interface
+  ${catkin_LIBRARIES}
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -108,7 +113,7 @@ target_link_libraries(get_robot_location ${catkin_LIBRARIES})
 
 add_executable(wormhole_location_saver src/wormhole_location_saver.cpp)
 target_link_libraries(wormhole_location_saver postgresql_database)
-target_link_libraries(wormhole_location_saver ${catkin_LIBRARIES})
+target_link_libraries(wormhole_location_saver db_interface ${catkin_LIBRARIES})
 
 ### Navigator Action Server ###
 add_executable(navigator_action_server src/navigator_action_server.cpp)
@@ -119,3 +124,13 @@ target_link_libraries(navigator_action_server ${catkin_LIBRARIES})
 add_executable(navigator_action_client src/navigator_action_client.cpp)
 add_dependencies(navigator_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(navigator_action_client ${catkin_LIBRARIES})
+
+install(
+  TARGETS db_interface
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
+
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
