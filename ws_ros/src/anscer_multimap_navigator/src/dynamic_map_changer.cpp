@@ -23,9 +23,9 @@ class DynamicMapChanger
         // wait for the very first messages to arrive
         ROS_INFO("Waiting for initial maps...");
         // grab the latched maps
-        auto msg1 = ros::topic::waitForMessage<nav_msgs::OccupancyGrid>("/map_1", ros::Duration(5.0));
+        auto msg1 = ros::topic::waitForMessage<nav_msgs::OccupancyGrid>("/map_1");
         if (msg1) { map1_ = *msg1; has_map_1_ = true; ROS_INFO("Loaded /map_1"); }
-        auto msg2 = ros::topic::waitForMessage<nav_msgs::OccupancyGrid>("/map_2", ros::Duration(5.0));
+        auto msg2 = ros::topic::waitForMessage<nav_msgs::OccupancyGrid>("/map_2");
         if (msg2) { map2_ = *msg2; has_map_2_ = true; ROS_INFO("Loaded /map_2"); }
 
         // publish the default map
