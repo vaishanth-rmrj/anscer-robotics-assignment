@@ -9,6 +9,7 @@
 
 // project imports
 #include <anscer_multimap_navigator/db_interface.h>
+#include "anscer_multimap_navigator/SwitchMap.h"
 
 typedef actionlib::SimpleActionServer<anscer_multimap_navigator::MultimapNavigateAction> Server;
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
@@ -21,13 +22,15 @@ protected:
   MoveBaseClient move_base_ac_;
   std::string action_name_;
   DBInterface db;
+  ros::ServiceClient switch_map_client_;
 
 public:
   MultimapNavigatorActionServer(const std::string& name)
     : server_(nh_, name, boost::bind(&MultimapNavigatorActionServer::executeCB, this, _1), false),
       action_name_(name),
       db("localhost","11511","anscer","anscer","wormhole_locations"),
-      move_base_ac_("move_base", true)
+      move_base_ac_("move_base", true),
+      switch_map_client_(nh_.serviceClient<anscer_multimap_navigator::SwitchMap>("switch_map"))
   {
     // wait for move_base to come up
     ROS_INFO("[Navigator Action Server] Waiting for move_base action server...");
@@ -41,14 +44,17 @@ public:
       return;
     }
 
+    ROS_INFO("Waiting for switch_map service...");
+    switch_map_client_.waitForExistence();
+
     server_.start();
     ROS_INFO("[Navigator Action Server] '%s' started, waiting for goals...", action_name_.c_str());
   }
 
   bool _fetch_current_map_name(std::string &map_name){
-    if (!nh_.getParam("/map_server/map_name", map_name))
+    if (!nh_.getParam("map_name", map_name))
     {
-      ROS_ERROR("[Navigator Action Server] Failed to read /map_server/map_name");      
+      ROS_ERROR("[Navigator Action Server] Failed to read /map_name");      
       return false;
     }
     return true;
@@ -109,13 +115,32 @@ public:
             return;
         }
 
-        anscer_multimap_navigator::MultimapNavigateResult result;
-        result.success = true;
-        result.message = "Wormhole Location reached";  
-        server_.setAborted(result);
-        return;
-    }
+        // switch map
+        anscer_multimap_navigator::SwitchMap srv;
+        srv.request.map_name = goal->map_name;
 
+        if (switch_map_client_.call(srv)) {
+          if (srv.response.success) {
+            ROS_INFO("Switched Map succesfully %s", srv.response.message.c_str());
+          } else {
+            ROS_WARN("Unable to switch map %s", srv.response.message.c_str());
+            anscer_multimap_navigator::MultimapNavigateResult result;
+            result.success = false;
+            result.message = "Unable to switch map";  
+            server_.setAborted(result);
+            return;
+          }
+
+        } else {
+          ROS_ERROR("Failed to call service switch_map");
+          anscer_multimap_navigator::MultimapNavigateResult result;
+          result.success = false;
+          result.message = "Failed to call service switch_map";  
+          server_.setAborted(result);
+          return;
+
+        }
+    }
 
     // send the goal to move base
     move_base_msgs::MoveBaseGoal mb_goal;
@@ -141,7 +166,6 @@ public:
     }
 
     ROS_INFO("[Navigator Action Server] Robot Succesfully reached Destination at x=%.2f, y=%.2f", goal->x, goal->y);
-    // debug: immediately succeed
     anscer_multimap_navigator::MultimapNavigateResult result;
     result.success = true;
     result.message = "Location '" + goal->map_name + "' processed";
