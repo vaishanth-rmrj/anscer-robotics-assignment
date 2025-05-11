@@ -2,7 +2,7 @@
 set -e
 
 # Set ROS to use port 11411
-export ROS_MASTER_URI=http://localhost:11411
+export ROS_MASTER_URI=http://localhost:11611
 export ROS_HOSTNAME=localhost
 
 # setup ros environment
