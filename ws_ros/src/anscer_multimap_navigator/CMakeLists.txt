@@ -10,6 +10,8 @@ project(anscer_multimap_navigator)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  nav_msgs
+  std_srvs
   tf2_ros
   actionlib
   actionlib_msgs
@@ -32,11 +34,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  SwitchMap.srv
+)
 
 # Generate actions in the 'action' folder
 add_action_files(
@@ -64,7 +65,7 @@ generate_messages(
 catkin_package(
    INCLUDE_DIRS include
    LIBRARIES ${PROJECT_NAME} db_interface_lib
-   CATKIN_DEPENDS roscpp std_msgs database_interface actionlib actionlib_msgs message_runtime
+   CATKIN_DEPENDS roscpp std_msgs nav_msgs std_srvs database_interface actionlib actionlib_msgs message_runtime 
   # DEPENDS system_lib
 )
 
