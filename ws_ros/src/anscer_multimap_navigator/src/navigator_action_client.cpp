@@ -41,7 +41,7 @@ int main(int argc, char** argv)
     _ac_client.sendGoal(goal);
 
     // wait till action server finishes
-    bool is_done = _ac_client.waitForResult(ros::Duration(5.0));
+    bool is_done = _ac_client.waitForResult(ros::Duration(120.0));
 
     if (is_done)
     {
