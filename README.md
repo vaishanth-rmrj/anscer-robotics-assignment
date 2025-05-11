@@ -41,7 +41,7 @@
 ## Storing Map specific Wormhole location on database
 1. Start Robot navigation and Navigate to Wormhole location using 2D navigate tool in RVIZ
     ```
-    roslaunch anscer_navigation anscer_navigation.launch map_name:=room1
+    roslaunch anscer_navigation anscer_navigation.launch map_name:=<map_name>
     ```
 2. Save Wormhole location to DB
     ```
@@ -51,7 +51,7 @@
 ## Multimap Navigation
 1. Start the multimap navigator
     ```
-    roslaunch anscer_multimap_navigator anscer_multimap_navigation.launch current_map_name:=room1
+    roslaunch anscer_multimap_navigator anscer_multimap_navigation.launch current_map_name:=<map_name>
     ```
 2. Provide the Goal location using navigator action client
     ```
