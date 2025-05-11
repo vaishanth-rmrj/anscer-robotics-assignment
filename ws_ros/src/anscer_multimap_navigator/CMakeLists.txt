@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
   message_generation
+  sql_database
 )
 
 ## System dependencies are found with CMake's conventions
@@ -118,7 +119,7 @@ target_link_libraries(wormhole_location_saver db_interface ${catkin_LIBRARIES})
 ### Navigator Action Server ###
 add_executable(navigator_action_server src/navigator_action_server.cpp)
 add_dependencies(navigator_action_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(navigator_action_server ${catkin_LIBRARIES})
+target_link_libraries(navigator_action_server db_interface ${catkin_LIBRARIES})
 
 ### Navigator Action Client ###
 add_executable(navigator_action_client src/navigator_action_client.cpp)
