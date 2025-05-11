@@ -62,3 +62,11 @@
     [Location 2] [Room1] rosrun anscer_multimap_navigator navigator_action_client _map_name:=room1 _x:=-0.33 _y:=-3.01
 
     ```
+
+## Optional: Docker Image for Development
+```
+<!-- build image and spinup container with compose command -->
+cd ./anscer-robotics-assignment/
+docker compose up -d
+<!-- Attach your VS code or open intercative terminal inside it -->
+```
