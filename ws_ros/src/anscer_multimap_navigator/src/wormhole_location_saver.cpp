@@ -1,48 +1,14 @@
-#include <string>
-#include <vector>
 
-#include <database_interface/db_class.h>
 #include <boost/shared_ptr.hpp>
 #include <database_interface/postgresql_database.h>
 
-// ros imports
 #include <ros/ros.h>
-#include <tf2_ros/transform_listener.h>
 #include <geometry_msgs/TransformStamped.h>
+#include <tf2_ros/transform_listener.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
-struct WormholeLocationData {
-  std::string map_name;
-  double x;
-  double y;
-};
-
-class WormholeLocations : public database_interface::DBClass
-{
-
-public:
-  
-  // db fields 
-  database_interface::DBField<std::string> map_name_;
-  database_interface::DBField< std::vector<double> > location_;
-
-  WormholeLocations() : 
-    map_name_(database_interface::DBFieldBase::TEXT, 
-		this, "map_name", "wormhole_locations", true),
-    location_(database_interface::DBFieldBase::TEXT, 
-			this, "location", "wormhole_locations", true)
-  {
-    primary_key_field_ = &map_name_;
-
-    //all other fields go into the fields_ array of the DBClass
-    fields_.push_back(&location_);
-
-    // let all fields be read automatically when an instance 
-    setAllFieldsReadFromDatabase(true);
-    //let all fields be written automatically when an instance 
-    setAllFieldsWriteToDatabase(true);
-  }
-};
+// project imports
+#include <anscer_multimap_navigator/db_interface.h>
 
 void get_robot_location(WormholeLocationData& location){
 
@@ -77,79 +43,43 @@ int main(int argc, char **argv)
   ros::NodeHandle nh;
 
   // init db interface
-  database_interface::PostgresqlDatabase database(
-    "localhost", 
-    "11511",
-    "anscer", 
-    "anscer", 
-    "wormhole_locations"
-  );
+  DBInterface db("localhost","11511","anscer","anscer","wormhole_locations");
   
   // check for connection
-  if (!database.isConnected())
+  if (!db.isConnected())
   {
-    std::cerr << "Database failed to connect \n";
-    return -1;
+    ROS_WARN("[Wormhole Location Saver] Database failed to connect.");
+    return 0;
   }
-  std::cerr << "Database connected successfully \n";
+  ROS_INFO("[Wormhole Location Saver] Database connected successfully.");
 
   WormholeLocationData location{};
-  get_robot_location(location);
-  
+  get_robot_location(location);  
 
-  // add wormhole locations to db
-  WormholeLocations wormhole_location;
-  wormhole_location.map_name_.data() = location.map_name;
-  wormhole_location.location_.data() = {location.x, location.y};
-
-  // check if wormhole map location exists
-  std::vector< boost::shared_ptr<WormholeLocations> > existing_locations;
-  std::string where_clause = "map_name='" + location.map_name + "'";
-  database.getList(existing_locations, where_clause);
-
-  if(existing_locations.size() > 0){
-
-    // update entry with new location
-    existing_locations[0]->map_name_.data() = location.map_name;
-    existing_locations[0]->location_.data() = {location.x, location.y};
-    if (!database.saveToDatabase( &(existing_locations[0]->location_) ) )
-      std::cerr << "Failed to modify location\n";
-    else
-      std::cerr << "Location modified successfully\n";
+  if (db.entryExists(location.map_name)) {
+    db.updateEntry(location);
+    ROS_INFO("[Wormhole Location Saver] Updated existing entry.");
 
   } else {
-
-    // insert new location
-    if (!database.insertIntoDatabase(&wormhole_location)) 
-      std::cerr << "Wormhole Location insertion failed\n";
-    else 
-      std::cerr << "Wormhole Location insertion succeeded\n";
+    db.addEntry(location);
+    ROS_INFO("[Wormhole Location Saver] Inserted new entry.");
   }
 
-  // get list of all locations
-  std::vector< boost::shared_ptr<WormholeLocations> > wormhole_locations;
-  if (!database.getList(wormhole_locations))
+  // get location saved in DB
+  auto db_location = db.getEntry(location.map_name);
+  if (db_location == nullptr)
   {
-    std::cerr << "Failed to get list of Wormhole Locations\n";
-    return -1;
+    ROS_WARN("[Wormhole Location Saver] Failed to retrieve wormhole locations from DB!");
+    return 0;
   }
-  std::cerr << "Retrieved " << wormhole_locations.size() << " locations(s) \n";
+  ROS_INFO("[Wormhole Location Saver] Retrieved wormhole locations.");
 
-
-  // display all locations
-  std::cerr << "Locations:\n";
-  for (size_t i = 0; i < wormhole_locations.size(); ++i)
-  {
-    std::cerr << wormhole_locations[i]->map_name_.data() << ": [";
-    const auto &locs = wormhole_locations[i]->location_.data();
-    for (size_t j = 0; j < locs.size(); ++j) {
-        std::cerr << locs[j];
-        if (j + 1 < locs.size()) 
-            std::cerr << ", ";
-    }
-
-    std::cerr << "]\n\n";
-  }
+  // display location
+  ROS_INFO("DB Location Details: Map Name= %s | x=%.2f | y=%.2f", 
+    db_location->map_name_.data().c_str(), 
+    db_location->location_.data()[0], 
+    db_location->location_.data()[1]
+  );
 
   return 0;
 }
