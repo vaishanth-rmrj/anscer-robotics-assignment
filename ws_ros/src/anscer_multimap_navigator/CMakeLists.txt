@@ -127,6 +127,11 @@ add_executable(navigator_action_client src/navigator_action_client.cpp)
 add_dependencies(navigator_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(navigator_action_client ${catkin_LIBRARIES})
 
+### Dynamic Map Changer ###
+add_executable(dynamic_map_changer src/dynamic_map_changer.cpp)
+add_dependencies(dynamic_map_changer ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(dynamic_map_changer ${catkin_LIBRARIES})
+
 install(
   TARGETS db_interface
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
